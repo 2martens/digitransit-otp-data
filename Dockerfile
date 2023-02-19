@@ -1,19 +1,18 @@
-ARG OTP_VERSION=fe76ec41335f86acc5ea755a15cb4c3d4ea846d7
+ARG OTP_VERSION=1adb2ef64a0e6bb6d4aa0d1010f286354899122b
 FROM mfdz/opentripplanner:$OTP_VERSION AS otp
 
 # defined empty, so we can access the arg as env later again
 ARG OTP_VERSION
-ENV ROUTER_NAME=vsh
-
-RUN apk add --update zip && \
-    rm -rf /var/cache/apk/*
+ENV ROUTER_NAME=sw
+RUN apt-get update
+RUN apt-get install --yes zip
 
 RUN mkdir -p /opt/opentripplanner/build/$ROUTER_NAME/
 
 # add build data
 # NOTE: we're trying to use dockers caching here. add items in order of least to most frequent changes
-ADD https://rgw1.netways.de/swift/v1/AUTH_66c3085bb69a42ed8991c90e5c1f453e/digitransit/osm/tuebingen-schwaben-latest.osm.pbf /opt/opentripplanner/build/$ROUTER_NAME/
-ADD https://gtfs.mfdz.de/ulm.merged.gtfs.zip /opt/opentripplanner/build/$ROUTER_NAME/
+ADD unterfranken-latest.osm.pbf /opt/opentripplanner/build/$ROUTER_NAME/
+ADD regional-gtfs.zip /opt/opentripplanner/build/$ROUTER_NAME/
 ADD router-config.json /opt/opentripplanner/build/$ROUTER_NAME/
 ADD build-config.json /opt/opentripplanner/build/$ROUTER_NAME/
 
